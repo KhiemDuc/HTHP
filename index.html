@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tính toán học phí học sinh</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Header Section -->
+    <div class="container-fluid bg-light py-3 border-bottom">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-2 text-center text-md-start">
+            <img
+              src="./Picture1.png"
+              alt="Logo"
+              class="img-fluid"
+              style="max-height: 80px"
+            />
+          </div>
+          <div class="col-md-8 text-center">
+            <h3 class="mb-1 fw-bold text-success">
+              TRUNG TÂM GIÁO VIÊN GIỎI QUỐC GIA
+            </h3>
+            <p class="mb-0">
+              Website:
+              <a href="https://Giaoviengioi.vn" class="text-decoration-none"
+                >Giaoviengioi.vn</a
+              >
+              *
+              <a href="https://Giaoviengioi.com.vn" class="text-decoration-none"
+                >Giaoviengioi.com.vn</a
+              >
+            </p>
+            <p class="mb-0">Page: Trung Tâm Giáo Viên Giỏi</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Existing Content -->
+    <div class="container mt-5">
+      <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white text-center">
+          <h1>Tính toán học phí học sinh</h1>
+        </div>
+        <div class="card-body">
+          <form id="excelProcessorForm">
+            <!-- Template File Input -->
+            <div class="mb-3">
+              <label for="templateFileInput" class="form-label"
+                >Template File:</label
+              >
+              <input
+                required
+                type="file"
+                class="form-control"
+                id="templateFileInput"
+                accept=".xlsx"
+              />
+              <small id="templateFileHelp" class="form-text text-muted">
+                File mẫu chứa bảng học phí và các pattern
+              </small>
+            </div>
+
+            <!-- Data File Input -->
+            <div class="mb-3">
+              <label for="dataFileInput" class="form-label">Data File:</label>
+              <input
+                required
+                type="file"
+                class="form-control"
+                id="dataFileInput"
+                accept=".xlsx"
+              />
+              <small id="dataFileHelp" class="form-text text-muted">
+                File chứa dữ liệu học sinh và các pattern
+              </small>
+            </div>
+
+            <div class="mb-3">
+              <label for="numberOfMonths" class="form-label"
+                >Chọn số tháng muốn hạch toán:</label
+              >
+              <input
+                type="number"
+                min="1"
+                max="12"
+                class="form-control"
+                id="numberOfMonths"
+                width="50%"
+                required
+                value="1"
+              />
+              <small id="numberOfMonthsHelp" class="form-text text-muted">
+                Số tháng muốn hạch toán (tính từ ngày khai giảng) có giá trị từ
+                1 -> 12
+              </small>
+            </div>
+
+            <div class="mb-3">
+              <label for="patternSelect" class="form-label"
+                >Chọn file name theo pattern:</label
+              >
+              <select class="form-select" id="patternSelect">
+                <option value="">Chọn pattern</option>
+              </select>
+              <small id="patternHelp" class="form-text text-muted">
+                Ví dụ: Chọn pattern student_name thì tên file sẽ có dạng:
+              </small>
+              <i class="text-bold">Hạch toán hoá đơn + student_name</i>
+            </div>
+
+            <!-- Process Button -->
+            <div class="text-center">
+              <button
+                type="button"
+                id="processBtn"
+                class="btn btn-primary btn-lg"
+              >
+                <i class="bi bi-cloud-arrow-down"></i> Tính toán và tải xuống
+                các file hạch toán
+              </button>
+            </div>
+            <div class="message" style="color: red"></div>
+          </form>
+
+          <!-- Progress Indicator -->
+          <div id="progressSection" class="mt-4 d-none">
+            <div class="alert alert-info" role="alert">
+              Processing... Please wait.
+            </div>
+          </div>
+
+          <!-- Success Message -->
+          <div id="successSection" class="mt-4 d-none">
+            <div class="alert alert-success" role="alert">
+              Files processed successfully! Download will start shortly.
+            </div>
+          </div>
+
+          <!-- Error Message -->
+          <div id="errorSection" class="mt-4 d-none">
+            <div class="alert alert-danger" role="alert">
+              An error occurred during processing. Please try again.
+            </div>
+          </div>
+        </div>
+
+        <div class="card-footer text-center text-muted">
+          <small
+            >&copy; 2025 - Bản quyền thuộc về <a>Giaoviengioi.vn</a>
+          </small>
+        </div>
+        <div id="result" class="mt-3"></div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- XLSX.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"
+      integrity="sha512-dlPw+ytv/6JyepmelABrgeYgHI0O+frEwgfnPdXDTOIZz+eDgfW07QXG02/O8COfivBdGNINy+Vex+lYmJ5rxw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="./buoihojc.js"></script>
+    <script src="./convertPatternValues.js"></script>
+    <script src="./getInputExcel.js"></script>
+    <script>
+      async function updateExcelTemplate(
+        templateArrayBuffer, // Change to accept ArrayBuffer instead of path
+        feeTable,
+        patterns,
+        values,
+        fileName
+      ) {
+        try {
+          const workbook = new ExcelJS.Workbook();
+          await workbook.xlsx.load(templateArrayBuffer); // Load from ArrayBuffer
+          const worksheet = workbook.getWorksheet(1);
+
+          let startRow = null;
+          let startCol = null;
+
+          // Tìm vị trí của pattern <hoc_phi> để điền feeTable
+          worksheet.eachRow((row, rowNumber) => {
+            row.eachCell((cell, colNumber) => {
+              if (cell.value === "<hoc_phi>") {
+                startRow = rowNumber;
+                startCol = colNumber;
+              }
+
+              // Tìm và thay thế các pattern khác
+              if (cell.value && typeof cell.value === "string") {
+                patterns.forEach((pattern, index) => {
+                  if (cell.value.includes(pattern)) {
+                    cell.value = cell.value.replace(
+                      pattern,
+                      values[index] || ""
+                    ); // Thay thế bằng giá trị tương ứng
+                  }
+                });
+              }
+            });
+          });
+
+          if (startRow === null || startCol === null) {
+            console.error("Pattern <hoc_phi> not found in the template!");
+            return;
+          }
+
+          // Điền dữ liệu feeTable vào worksheet
+          feeTable.forEach((row, rowIndex) => {
+            row.forEach((value, colIndex) => {
+              const cell = worksheet.getCell(
+                startRow + rowIndex,
+                startCol + colIndex
+              );
+              cell.value = value;
+
+              // Nếu là dòng tổng, áp dụng định dạng đặc biệt
+              if (rowIndex === feeTable.length - 1) {
+                cell.font = {
+                  bold: true, // Đậm chữ
+                  size: 11, // Cỡ chữ
+                };
+                cell.alignment = { horizontal: "left" }; // Canh trái
+                // cell.fill = {
+                //   type: "pattern",
+                //   // pattern: "solid",
+                //   fgColor: { argb: "FFFFFF" }, // Màu nền vàng nhạt
+                // };
+              }
+
+              // Sao chép định dạng từ ô <hoc_phi> ban đầu nếu không phải dòng tổng
+              if (rowIndex !== feeTable.length - 1) {
+                const templateCell = worksheet.getCell(startRow, startCol);
+                cell.style = { ...templateCell.style };
+              }
+            });
+          });
+
+          // Đặt chiều rộng tối thiểu cho các cột (15px)
+          const columnCount = feeTable[0].length; // Số cột trong bảng
+          for (let i = 0; i < columnCount; i++) {
+            const column = worksheet.getColumn(startCol + i); // Lấy cột hiện tại
+            column.width = 15; // Đặt chiều rộng tối thiểu là 15px
+          }
+          const buffer = await workbook.xlsx.writeBuffer();
+
+          // Create blob from buffer
+          const blob = new Blob([buffer], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          });
+
+          // Create and trigger download
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = fileName + ".xlsx";
+          document.body.appendChild(a);
+          a.click();
+
+          // Cleanup
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        } catch (e) {
+          document.querySelector(".message").innerHTML =
+            "<p> Đã có lỗi xảy ra trong quá trình xử lý. Vui lòng thử lại hoặc kiểm tra file data hoặc template.</p>";
+        }
+      }
+
+      function populatePatternDropdown(patterns) {
+        const select = document.getElementById("patternSelect");
+        if (patterns.length) {
+          // Clear existing options
+          select.innerHTML = '<option value="">Choose a pattern...</option>';
+
+          // Add new options
+          patterns.forEach((pattern) => {
+            const option = document.createElement("option");
+            option.value = pattern;
+            option.textContent = pattern;
+            select.appendChild(option);
+          });
+        } else {
+          select.innerHTML = '<option value="">No patterns found</option>';
+        }
+      }
+    </script>
+    <!-- Script Handle -->
+    <script>
+      document
+        .getElementById("dataFileInput")
+        .addEventListener("change", async (event) => {
+          const file = event.target.files[0];
+          if (file) {
+            const arrayBuffer = await file.arrayBuffer();
+            try {
+              const valuesList = await extractPatternAndValues(arrayBuffer);
+
+              // Get unique patterns from first row
+              const { patterns, values } = convertToPatternsAndValues(
+                valuesList[0]
+              );
+
+              populatePatternDropdown(patterns);
+            } catch (e) {
+              alert("Không có pattern nào được tìm thấy trong file.");
+            }
+          }
+        });
+      let patternFileName = "";
+      document
+        .getElementById("patternSelect")
+        .addEventListener("change", function (e) {
+          patternFileName = e.target.value;
+        });
+
+      document
+        .getElementById("processBtn")
+        .addEventListener("click", async () => {
+          const monthsToProcess =
+            document.getElementById("numberOfMonths").value;
+
+          // Mảng các ngày nghỉ
+          const holidays = [
+            // new Date("2025-01-10"), // Ví dụ: ngày 10/01/2025 nghỉ
+            // new Date("2025-01-17"), // Ví dụ: ngày 17/01/2025 nghỉ
+          ];
+
+          const fileInput = document.getElementById("dataFileInput");
+          if (!fileInput.files.length) {
+            alert("Please select a data file.");
+            return;
+          }
+
+          const file = fileInput.files[0];
+          const arrayBuffer = await file.arrayBuffer();
+
+          // Sử dụng hàm extractPatternAndValues để xử lý file
+          const valuesList = await extractPatternAndValues(arrayBuffer);
+
+          valuesList.forEach(async (value) => {
+            const { patterns, values } = convertToPatternsAndValues(value);
+
+            // Tạo bảng học phí
+
+            const startDate = value["<start_date>"];
+            if (typeof startDate == "string") {
+              try {
+                startDate = new Date(startDate);
+              } catch (e) {
+                alert("Ngày khai giảng không hợp lệ.");
+              }
+            }
+
+            const fileName = value[patternFileName];
+
+            const feePerSession = value["<money>"] * 1000;
+
+            const weekdayss = value["<time>"];
+
+            console.log(weekdayss);
+
+            const weekdays = processWeekdays(weekdayss);
+            console.log(weekdays);
+
+            const feeTable = generateFeeTable(
+              startDate,
+              weekdays,
+              feePerSession,
+              monthsToProcess,
+              holidays
+            );
+            console.log(patterns);
+            // console.log(values);
+            console.log(feeTable);
+
+            // Tải file mẫu và cập nhật dữ liệu
+
+            const templateFile =
+              document.getElementById("templateFileInput").files[0];
+            const templateBuffer = await templateFile.arrayBuffer();
+
+            await updateExcelTemplate(
+              templateBuffer,
+              feeTable,
+              patterns,
+              values,
+              fileName
+            );
+          });
+        });
+    </script>
+  </body>
+</html>
