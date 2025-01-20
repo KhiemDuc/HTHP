@@ -1,4 +1,4 @@
-async function extractPatternAndValues(arrayBuffer) {
+async function extractPatternAndValues(arrayBuffer, skip = 2) {
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.load(arrayBuffer);
   const worksheet = workbook.getWorksheet(1); // Làm việc với sheet đầu tiên
@@ -6,14 +6,14 @@ async function extractPatternAndValues(arrayBuffer) {
   const patterns = [];
   const valuesList = [];
 
-  // Lấy danh sách pattern từ dòng 2
-  worksheet.getRow(2).eachCell((cell, colNumber) => {
+  // Lấy danh sách pattern từ dòng chỉ định (skip)
+  worksheet.getRow(skip).eachCell((cell, colNumber) => {
     patterns[colNumber] = cell.value; // Lưu pattern theo số cột (colNumber)
   });
 
-  // Lấy các dòng từ dòng 3 trở đi (giá trị tương ứng)
+  // Lấy các dòng từ dòng (skip + 1) trở đi (giá trị tương ứng)
   worksheet.eachRow((row, rowNumber) => {
-    if (rowNumber > 2) {
+    if (rowNumber > skip) {
       const rowObject = {};
 
       row.eachCell((cell, colNumber) => {

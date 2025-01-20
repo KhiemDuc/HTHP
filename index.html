@@ -66,11 +66,21 @@
               <small id="templateFileHelp" class="form-text text-muted">
                 File mẫu chứa bảng học phí và các pattern
               </small>
+              <br />
+              <small id="dataFileHelp" class="form-text text-muted">
+                File mẫu có thể tải tại đây:
+                <a href="./Phieuthu.xlsx" download
+                  >Tải file mẫu</a
+                >
             </div>
 
             <!-- Data File Input -->
             <div class="mb-3">
               <label for="dataFileInput" class="form-label">Data File:</label>
+              </br>
+              <small id="dataFileHelp" class="form-text text-muted">
+                File chứa dữ liệu học sinh và các pattern
+              </small>
               <input
                 required
                 type="file"
@@ -79,27 +89,85 @@
                 accept=".xlsx"
               />
               <small id="dataFileHelp" class="form-text text-muted">
-                File chứa dữ liệu học sinh và các pattern
+                Lưu ý: File nên điền các pattern tại dòng thứ hai
               </small>
+              <br />
+              <small id="dataFileHelp" class="form-text text-muted">
+                File mẫu có thể tải tại đây:
+                <a href="./template.xlsx" download
+                  >Tải file mẫu</a
+                >
             </div>
 
             <div class="mb-3">
-              <label for="numberOfMonths" class="form-label"
-                >Chọn số tháng muốn hạch toán:</label
+              <label for="skipRows" class="form-label"
+                >Chọn số dòng muốn skip:</label
               >
               <input
                 type="number"
                 min="1"
-                max="12"
                 class="form-control"
-                id="numberOfMonths"
+                id="skipRows"
                 width="50%"
                 required
-                value="1"
+                value="2"
               />
-              <small id="numberOfMonthsHelp" class="form-text text-muted">
-                Số tháng muốn hạch toán (tính từ ngày khai giảng) có giá trị từ
-                1 -> 12
+              <small id="skipRowsHelp" class="form-text text-muted">
+                Chọn số dòng muốn skip (tính từ dòng đầu tiên) có giá trị từ 1 
+                để tránh đọc dòng header hoặc các dòng không cần thiết trong file dữ liệu
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label class="mb-2">Chọn phương thức thêm ngày nghỉ nghễ:</label>
+              
+              <!-- Radio buttons for selection -->
+              <div class="mb-3">
+                  <div class="form-check">
+                      <input class="form-check-input" type="radio" name="dateInputMethod" id="singleDateRadio" value="single" checked>
+                      <label class="form-check-label" for="singleDateRadio">
+                          Chọn đơn ngày nghỉ 
+                      </label>
+                  </div>
+                  <div class="form-check">
+                      <input class="form-check-input" type="radio" name="dateInputMethod" id="rangeDateRadio" value="range">
+                      <label class="form-check-label" for="rangeDateRadio">
+                          Chọn khoảng ngày nghỉ
+                      </label>
+                  </div>
+            </div>
+
+            <!-- Single date selection -->
+            <div id="singleDateSection" class="date-input-section mb-2" style="display: flex; align-items: center; gap: 1; justify-items: center; justify-content: space-between; flex-direction: row;">
+              <input style="width: 80%;" type="date" id="dayOffInput" class="form-control mb-2">
+              <button onclick="addDayOff()" class="btn btn-primary btn-sm">Thêm ngày nghỉ</button>
+          </div>
+
+          <!-- Range date selection -->
+          <div id="rangeDateSection" class="date-input-section mb-2" style="display: none;">
+              <input type="date" id="startDate" class="form-control mb-2" placeholder="Start Date">
+              <input type="date" id="endDate" class="form-control mb-2" placeholder="End Date">
+              <button onclick="addDateRange()" class="btn btn-primary btn-sm w-100">Add Date Range</button>
+          </div>
+
+          <div id="selectedDates" class="mt-2">
+              <!-- Selected dates will appear here -->
+          </div>
+
+
+            <div class="mb-3">
+              <label for="endDateProcess" class="form-label"
+                >Chọn ngày muốn hạch toán:</label
+              >
+              <input
+                type="date"
+                class="form-control"
+                id="endDateProcess"
+                width="50%"
+                required
+              />
+              <small id="endDateProcess" class="form-text text-muted">
+                Chọn ngày hạch toán, tính từ ngày khai giảng
               </small>
             </div>
 
@@ -115,6 +183,32 @@
               </small>
               <i class="text-bold">Hạch toán hoá đơn + student_name</i>
             </div>
+</div>
+
+<script>
+// Add this to your existing script section
+document.querySelectorAll('input[name="dateInputMethod"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+        const singleSection = document.getElementById('singleDateSection');
+        const rangeSection = document.getElementById('rangeDateSection');
+        
+        if (e.target.value === 'single') {
+            singleSection.style.display = 'block';
+            rangeSection.style.display = 'none';
+        } else {
+            singleSection.style.display = 'none';
+            rangeSection.style.display = 'block';
+        }
+    });
+});
+</script>
+
+<style>
+.date-input-section {
+    transition: all 0.3s ease;
+}
+</style>
+          </div>
 
             <!-- Process Button -->
             <div class="text-center">
@@ -180,6 +274,70 @@
 
     <!-- Script UI -->
     <script>
+
+      var daysOff = [];
+
+      function addDayOff() {
+        const dateInput = document.getElementById('dayOffInput');
+        const selectedDate = dateInput.value;
+        
+        if (selectedDate) {
+            if (!daysOff.includes(selectedDate)) {
+                daysOff.push(selectedDate);
+                displaySelectedDates();
+            } else {
+                alert('Date already selected!');
+            }
+            dateInput.value = '';
+        } else {
+            alert('Please select a date');
+        }
+      }
+
+      function addDateRange() {
+        const startDate = new Date(document.getElementById('startDate').value);
+        const endDate = new Date(document.getElementById('endDate').value);
+
+        if (!startDate || !endDate) {
+            alert('Please select both start and end dates');
+            return;
+        }
+
+        if (startDate > endDate) {
+            alert('Start date must be before end date');
+            return;
+        }
+
+        for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+            const dateStr = date.toISOString().split('T')[0];
+            if (!daysOff.includes(dateStr)) {
+                daysOff.push(dateStr);
+            }
+        }
+        displaySelectedDates();
+        document.getElementById('startDate').value = '';
+        document.getElementById('endDate').value = '';
+      }
+
+      function removeDayOff(date) {
+        daysOff = daysOff.filter(d => d !== date);
+        displaySelectedDates();
+      }
+
+      function displaySelectedDates() {
+        const container = document.getElementById('selectedDates');
+        container.innerHTML = '';
+        
+        daysOff.sort().forEach(date => {
+            const dateElement = document.createElement('div');
+            dateElement.className = 'alert alert-info d-flex justify-content-between align-items-center mb-2';
+            dateElement.innerHTML = `
+                <span>${date}</span>
+                <button onclick="removeDayOff('${date}')" class="btn btn-danger btn-sm">×</button>
+            `;
+            container.appendChild(dateElement);
+        });
+      }
       function populatePatternDropdown(patterns) {
         const select = document.getElementById("patternSelect");
         if (patterns.length) {
@@ -200,6 +358,8 @@
     </script>
     <!-- Script Handle -->
     <script>
+      document.querySelector("#endDateProcess").valueAsDate = new Date();
+
       document
         .getElementById("dataFileInput")
         .addEventListener("change", async (event) => {
@@ -230,14 +390,13 @@
       document
         .getElementById("processBtn")
         .addEventListener("click", async () => {
-          const monthsToProcess =
-            document.getElementById("numberOfMonths").value;
+          const endDateProcess =
+            document.getElementById("endDateProcess").value;
+          
+          const skipRows = document.getElementById("skipRows").value;
 
           // Mảng các ngày nghỉ
-          const holidays = [
-            // new Date("2025-01-10"), // Ví dụ: ngày 10/01/2025 nghỉ
-            // new Date("2025-01-17"), // Ví dụ: ngày 17/01/2025 nghỉ
-          ];
+          const holidays = daysOff.map((date) => new Date(date));
 
           const fileInput = document.getElementById("dataFileInput");
           if (!fileInput.files.length) {
@@ -249,13 +408,14 @@
           const arrayBuffer = await file.arrayBuffer();
 
           // Sử dụng hàm extractPatternAndValues để xử lý file
-          const valuesList = await extractPatternAndValues(arrayBuffer);
+          const valuesList = await extractPatternAndValues(arrayBuffer, skipRows);
 
           valuesList.forEach(async (value) => {
             const { patterns, values } = convertToPatternsAndValues(value);
 
             // Tạo bảng học phí
 
+            const trialDate = value["<trial_date>"];
             const startDate = value["<start_date>"];
             if (typeof startDate == "string") {
               try {
@@ -277,10 +437,11 @@
             console.log(weekdays);
 
             const feeTable = generateFeeTable(
+              trialDate,
               startDate,
               weekdays,
               feePerSession,
-              monthsToProcess,
+              endDateProcess,
               holidays
             );
             console.log(patterns);
@@ -299,6 +460,7 @@
               patterns,
               values,
               fileName
+
             );
           });
         });
