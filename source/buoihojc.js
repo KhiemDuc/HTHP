@@ -167,9 +167,9 @@ const generateFeeTable = (
 // Test function
 const testGenerateFeeTable = () => {
   let trialDate;
-  const startDate = "2025-01-03";
+  const startDate = "2025-01-16";
   const endDate = "2025-01-20";
-  const weekdays = [5]; // Thứ 2, 4, 6
+  const weekdays = [4]; // Thứ 2, 4, 6
   const feePerSession = 100000; // 100,000 VND mỗi buổi
   const holidays = [new Date("2025-01-15"), new Date("2025-02-05")]; // Các ngày nghỉ
 

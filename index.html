@@ -426,6 +426,7 @@ document.querySelectorAll('input[name="dateInputMethod"]').forEach(radio => {
             let startDateTime;
             if (typeof startDate === "string")
             {
+
               try {
                 startDateTime = parseDate(startDate);
                 // startDate = new Date(startDate);
@@ -447,7 +448,7 @@ document.querySelectorAll('input[name="dateInputMethod"]').forEach(radio => {
 
             const feeTable = generateFeeTable(
               trialDate,
-              startDateTime ? startDateTime : startDate,
+              startDateTime,
               weekdays,
               feePerSession,
               endDateProcess,
