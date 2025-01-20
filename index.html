@@ -355,6 +355,10 @@ document.querySelectorAll('input[name="dateInputMethod"]').forEach(radio => {
           select.innerHTML = '<option value="">No patterns found</option>';
         }
       }
+      function parseDate(dateString) {
+          const [day, month, year] = dateString.split(/[-/]/).map(Number);
+          return new Date(year, month - 1, day); // Lưu ý: Tháng trong JavaScript bắt đầu từ 0
+      }
     </script>
     <!-- Script Handle -->
     <script>
@@ -367,11 +371,11 @@ document.querySelectorAll('input[name="dateInputMethod"]').forEach(radio => {
           if (file) {
             const arrayBuffer = await file.arrayBuffer();
             try {
-              const valuesList = await extractPatternAndValues(arrayBuffer);
+              const valuesListX = await extractPatternAndValues(arrayBuffer);
 
               // Get unique patterns from first row
-              const { patterns, values } = convertToPatternsAndValues(
-                valuesList[0]
+              const { patterns } = convertToPatternsAndValues(
+                valuesListX[0]
               );
 
               populatePatternDropdown(patterns);
@@ -393,7 +397,7 @@ document.querySelectorAll('input[name="dateInputMethod"]').forEach(radio => {
           const endDateProcess =
             document.getElementById("endDateProcess").value;
           
-          const skipRows = document.getElementById("skipRows").value;
+          const skipRows = parseInt(document.getElementById("skipRows").value, 10);
 
           // Mảng các ngày nghỉ
           const holidays = daysOff.map((date) => new Date(date));
@@ -409,6 +413,7 @@ document.querySelectorAll('input[name="dateInputMethod"]').forEach(radio => {
 
           // Sử dụng hàm extractPatternAndValues để xử lý file
           const valuesList = await extractPatternAndValues(arrayBuffer, skipRows);
+          console.log(valuesList);
 
           valuesList.forEach(async (value) => {
             const { patterns, values } = convertToPatternsAndValues(value);
@@ -417,11 +422,15 @@ document.querySelectorAll('input[name="dateInputMethod"]').forEach(radio => {
 
             const trialDate = value["<trial_date>"];
             const startDate = value["<start_date>"];
-            if (typeof startDate == "string") {
+            console.log(startDate);
+            let startDateTime;
+            if (typeof startDate === "string")
+            {
               try {
-                startDate = new Date(startDate);
+                startDateTime = parseDate(startDate);
+                // startDate = new Date(startDate);
               } catch (e) {
-                alert("Ngày khai giảng không hợp lệ.");
+                console.error("Invalid start date", e);
               }
             }
 
@@ -438,7 +447,7 @@ document.querySelectorAll('input[name="dateInputMethod"]').forEach(radio => {
 
             const feeTable = generateFeeTable(
               trialDate,
-              startDate,
+              startDateTime ? startDateTime : startDate,
               weekdays,
               feePerSession,
               endDateProcess,

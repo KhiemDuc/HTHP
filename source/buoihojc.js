@@ -21,6 +21,7 @@ const generateFeeTable = (
   holidays = [] // Mảng ngày nghỉ
 ) => {
   const trial = new Date(trialDate);
+
   const start = new Date(startDate);
   const end = new Date(endDate);
   const table = [["Tháng"]];
@@ -45,23 +46,41 @@ const generateFeeTable = (
       currentMonthStart.getFullYear(),
       currentMonthStart.getMonth() + 1
     );
-
-    const sessions =
-      currentMonthStart.getMonth() === start.getMonth() &&
-      currentMonthStart.getFullYear() === start.getFullYear()
-        ? [
-            trial,
-            ...calculateSessionsForMultipleDays(
-              new Date(start.getTime() + 1),
+    let sessions;
+    if (!isNaN(trial.getTime())) {
+      sessions =
+        currentMonthStart.getMonth() === start.getMonth() &&
+        currentMonthStart.getFullYear() === start.getFullYear()
+          ? [
+              trial,
+              ...calculateSessionsForMultipleDays(
+                new Date(start.getTime() + 1),
+                Math.min(currentMonthEnd, end),
+                weekdays
+              ),
+            ]
+          : calculateSessionsForMultipleDays(
+              currentMonthStart,
               Math.min(currentMonthEnd, end),
               weekdays
-            ),
-          ]
-        : calculateSessionsForMultipleDays(
-            currentMonthStart,
-            Math.min(currentMonthEnd, end),
-            weekdays
-          );
+            );
+    } else {
+      sessions =
+        currentMonthStart.getMonth() === start.getMonth() &&
+        currentMonthStart.getFullYear() === start.getFullYear()
+          ? [
+              ...calculateSessionsForMultipleDays(
+                new Date(start.getTime() + 1),
+                Math.min(currentMonthEnd, end),
+                weekdays
+              ),
+            ]
+          : calculateSessionsForMultipleDays(
+              currentMonthStart,
+              Math.min(currentMonthEnd, end),
+              weekdays
+            );
+    }
 
     // Đánh dấu ngày nghỉ
     const sessionsWithHolidays = sessions.map((session) => {
@@ -95,8 +114,8 @@ const generateFeeTable = (
     ];
     let checkTrial = false;
     if (
-      currentMonthStart.getMonth() === start.getMonth() &&
-      currentMonthStart.getFullYear() === start.getFullYear()
+      currentMonthStart.getMonth() === trial.getMonth() &&
+      currentMonthStart.getFullYear() === trial.getFullYear()
     ) {
       row.push(trial.toLocaleDateString("vi-VN") + " (Học thử)");
       checkTrial = true;
@@ -147,10 +166,10 @@ const generateFeeTable = (
 
 // Test function
 const testGenerateFeeTable = () => {
-  const trialDate = "2025-01-01";
+  let trialDate;
   const startDate = "2025-01-03";
-  const endDate = "2025-02-10";
-  const weekdays = [1, 3, 5]; // Thứ 2, 4, 6
+  const endDate = "2025-01-20";
+  const weekdays = [5]; // Thứ 2, 4, 6
   const feePerSession = 100000; // 100,000 VND mỗi buổi
   const holidays = [new Date("2025-01-15"), new Date("2025-02-05")]; // Các ngày nghỉ
 

@@ -2,12 +2,12 @@ async function extractPatternAndValues(arrayBuffer, skip = 2) {
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.load(arrayBuffer);
   const worksheet = workbook.getWorksheet(1); // Làm việc với sheet đầu tiên
-
+  // skip = skip + 1; // Bắt đầu từ dòng skip + 1
   const patterns = [];
   const valuesList = [];
 
   // Lấy danh sách pattern từ dòng chỉ định (skip)
-  worksheet.getRow(skip).eachCell((cell, colNumber) => {
+  worksheet.getRow(2).eachCell((cell, colNumber) => {
     patterns[colNumber] = cell.value; // Lưu pattern theo số cột (colNumber)
   });
 
