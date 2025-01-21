@@ -422,7 +422,7 @@ document.querySelectorAll('input[name="dateInputMethod"]').forEach(radio => {
               document.getElementById("templateFileInput").files[0];
             const templateBuffer = await templateFile.arrayBuffer();
 
-          valuesList.forEach( (value) => {
+          valuesList.forEach( (value, index) => {
             const { patterns, values } = convertToPatternsAndValues(value);
 
             // Tạo bảng học phí
