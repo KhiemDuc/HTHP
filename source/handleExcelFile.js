@@ -53,11 +53,6 @@ async function updateExcelTemplate(
             size: 11, // Cỡ chữ
           };
           cell.alignment = { horizontal: "left" }; // Canh trái
-          // cell.fill = {
-          //   type: "pattern",
-          //   // pattern: "solid",
-          //   fgColor: { argb: "FFFFFF" }, // Màu nền vàng nhạt
-          // };
         }
 
         // Sao chép định dạng từ ô <hoc_phi> ban đầu nếu không phải dòng tổng
@@ -81,19 +76,39 @@ async function updateExcelTemplate(
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
 
-    // Create and trigger download
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = fileName + ".xlsx";
-    document.body.appendChild(a);
-    a.click();
-
-    // Cleanup
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    // Trigger download
+    triggerDownload(blob, fileName);
   } catch (e) {
     document.querySelector(".message").innerHTML =
       "<p> Đã có lỗi xảy ra trong quá trình xử lý. Vui lòng thử lại hoặc kiểm tra file data hoặc template.</p>";
+  }
+}
+
+// Hàm hỗ trợ tải xuống file
+function triggerDownload(blob, fileName) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName + ".xlsx";
+  document.body.appendChild(a);
+  a.click();
+
+  // Cleanup
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 1000); // Giãn cách để đảm bảo trình duyệt xử lý hoàn tất
+}
+
+// Hàm chính để xử lý nhiều file tải xuống tuần tự
+async function downloadMultipleFiles(fileConfigs) {
+  for (const config of fileConfigs) {
+    await updateExcelTemplate(
+      config.templateArrayBuffer,
+      config.feeTable,
+      config.patterns,
+      config.values,
+      config.fileName
+    );
   }
 }
