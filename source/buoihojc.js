@@ -24,7 +24,7 @@ const generateFeeTable = (
 
   const start = new Date(startDate);
   const end = new Date(endDate);
-  const table = [["Tháng"]];
+  const table = [[]];
   let totalSessions = 0;
   let totalFee = 0;
 
