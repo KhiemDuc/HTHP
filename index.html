@@ -267,6 +267,7 @@ document.querySelectorAll('input[name="dateInputMethod"]').forEach(radio => {
     ></script>
 
     <script src="./source/buoihojc.js"></script>
+    <script src="./source/test.js"></script>
     <script src="./source/convertPatternValues.js"></script>
     <script src="./source/getInputExcel.js"></script>
     <script src="./source/handleExcelFile.js"></script>
@@ -385,6 +386,7 @@ document.querySelectorAll('input[name="dateInputMethod"]').forEach(radio => {
           }
         });
       let patternFileName = "";
+       // Khởi tạo mảng rỗng
       document
         .getElementById("patternSelect")
         .addEventListener("change", function (e) {
@@ -394,6 +396,7 @@ document.querySelectorAll('input[name="dateInputMethod"]').forEach(radio => {
       document
         .getElementById("processBtn")
         .addEventListener("click", async () => {
+          const fileConfigs = [];
           const endDateProcess =
             document.getElementById("endDateProcess").value;
           
@@ -415,7 +418,11 @@ document.querySelectorAll('input[name="dateInputMethod"]').forEach(radio => {
           const valuesList = await extractPatternAndValues(arrayBuffer, skipRows);
           console.log(valuesList);
 
-          valuesList.forEach(async (value) => {
+          const templateFile =
+              document.getElementById("templateFileInput").files[0];
+            const templateBuffer = await templateFile.arrayBuffer();
+
+          valuesList.forEach( (value) => {
             const { patterns, values } = convertToPatternsAndValues(value);
 
             // Tạo bảng học phí
@@ -460,19 +467,33 @@ document.querySelectorAll('input[name="dateInputMethod"]').forEach(radio => {
 
             // Tải file mẫu và cập nhật dữ liệu
 
-            const templateFile =
-              document.getElementById("templateFileInput").files[0];
-            const templateBuffer = await templateFile.arrayBuffer();
 
-            await updateExcelTemplate(
-              templateBuffer,
-              feeTable,
-              patterns,
-              values,
-              fileName
 
-            );
+            // await updateExcelTemplate(
+            //   templateBuffer,
+            //   feeTable,
+            //   patterns,
+            //   values,
+            //   fileName
+
+            // );
+            fileConfigs.push({
+              templateArrayBuffer: templateBuffer, // Template chung cho tất cả
+              feeTable: feeTable, // Bảng học phí
+              patterns: patterns, // Patterns cần thay thế
+              values: values, // Giá trị tương ứng với patterns
+              fileName: fileName || `Report_${index + 1}`, // Tên file
+            });
+
+            // console.log(fileConfigs);
           });
+
+          console.log(fileConfigs);
+
+          await downloadMultipleFiles(fileConfigs);
+          // await mergeFilesIntoSingleWorkbook(fileConfigs, "Consolidated_Report");
+
+
         });
     </script>
   </body>
