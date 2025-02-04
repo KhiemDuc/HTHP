@@ -12,6 +12,18 @@ const calculateSessionsForMultipleDays = (startDate, endDate, weekdays) => {
   return sessions;
 };
 
+const chunkArray = (array, size) => {
+  const result = [];
+  for (let i = 0; i < array.length; i += size) {
+    const chunk = array.slice(i, i + size);
+    while (chunk.length < size) {
+      chunk.push(""); // Thêm ô rỗng nếu chưa đủ 4 phần tử
+    }
+    result.push(chunk);
+  }
+  return result;
+};
+
 const generateFeeTable = (
   trialDate,
   startDate,
@@ -24,7 +36,7 @@ const generateFeeTable = (
 
   const start = new Date(startDate);
   const end = new Date(endDate);
-  const table = [["Tháng"]];
+  const table = [["Tháng", "", "", "", "", "Số Buổi", "Học Phí"]];
   let totalSessions = 0;
   let totalFee = 0;
 
@@ -107,43 +119,60 @@ const generateFeeTable = (
     totalSessions += effectiveSessions.length;
     totalFee += monthFee;
 
-    const row = [
-      `Tháng ${
-        currentMonthStart.getMonth() + 1
-      }/${currentMonthStart.getFullYear()}`,
-    ];
+    const row = []; // Dòng đầu tiên
+
     let checkTrial = false;
     if (
       currentMonthStart.getMonth() === trial.getMonth() &&
       currentMonthStart.getFullYear() === trial.getFullYear()
     ) {
-      row.push(trial.toLocaleDateString("vi-VN") + " (Học thử)");
       checkTrial = true;
     }
 
-    if (checkTrial) {
-      row.push(
-        ...sessionsWithHolidays.slice(1),
-        "Số buổi: " + effectiveSessions.length,
-        `Tổng tiền tháng ${currentMonthStart.getMonth() + 1}: ` +
-          monthFee.toLocaleString("vi-VN", {
-            style: "currency",
-            currency: "VND",
-          })
-      );
-    } else {
-      row.push(
-        ...sessionsWithHolidays,
-        "Số buổi: " + effectiveSessions.length,
-        `Tổng tiền tháng ${currentMonthStart.getMonth() + 1}: ` +
-          monthFee.toLocaleString("vi-VN", {
-            style: "currency",
-            currency: "VND",
-          })
-      );
+    // Nếu có buổi học thử, bỏ phần tử đầu tiên
+    const sessionsToProcess = checkTrial
+      ? sessionsWithHolidays.slice(1)
+      : sessionsWithHolidays;
+
+    // Hàm chia mảng thành từng nhóm 4 phần tử
+    const chunkArray = (array, size) => {
+      const result = [];
+      for (let i = 0; i < array.length; i += size) {
+        result.push(array.slice(i, i + size));
+      }
+      return result;
+    };
+
+    const firstRowSessions = sessionsToProcess.slice(0, 4);
+
+    while (firstRowSessions.length < 4) {
+      firstRowSessions.push(""); // Đảm bảo luôn có 4 phần tử
     }
 
-    table.push(row);
+    // **Dòng đầu tiên** (Tháng + 4 buổi đầu tiên + Số buổi + Tổng tiền)
+    const firstRow = [
+      `Tháng ${
+        currentMonthStart.getMonth() + 1
+      }/${currentMonthStart.getFullYear()}`,
+      ...firstRowSessions, // Lấy tối đa 4 buổi đầu tiên
+      "" + effectiveSessions.length,
+      // `Tổng tiền tháng ${currentMonthStart.getMonth() + 1}: ` +
+      monthFee.toLocaleString("vi-VN", {
+        style: "currency",
+        currency: "VND",
+      }),
+    ];
+
+    table.push(firstRow); // Đẩy dòng đầu tiên vào bảng
+
+    // **Những buổi còn lại** (chia thành nhóm 4 phần tử)
+    const remainingSessions = sessionsToProcess.slice(4);
+    const formattedSessions = chunkArray(remainingSessions, 4);
+
+    // Đẩy từng nhóm vào bảng (tối đa 4 phần tử mỗi dòng)
+    formattedSessions.forEach((group) => {
+      table.push([...group]);
+    });
 
     currentMonthStart = new Date(
       currentMonthStart.getFullYear(),
@@ -157,11 +186,13 @@ const generateFeeTable = (
     "",
     "",
     "",
+    "",
+    "",
     "Tổng học phí: " +
       totalFee.toLocaleString("vi-VN", { style: "currency", currency: "VND" }),
   ]);
 
-  return table;
+  return table.slice(1); // Loại bỏ dòng "Tháng" ở đầu
 };
 
 // Test function

@@ -59,16 +59,22 @@ async function updateExcelTemplate(
         if (rowIndex !== feeTable.length - 1) {
           const templateCell = worksheet.getCell(startRow, startCol);
           cell.style = { ...templateCell.style };
+          cell.border = {
+            top: { style: "thin" },
+            left: { style: "thin" },
+            bottom: { style: "thin" },
+            right: { style: "thin" },
+          };
         }
       });
     });
 
     // Đặt chiều rộng tối thiểu cho các cột (15px)
-    const columnCount = feeTable[0].length; // Số cột trong bảng
-    for (let i = 0; i < columnCount; i++) {
-      const column = worksheet.getColumn(startCol + i); // Lấy cột hiện tại
-      column.width = 15; // Đặt chiều rộng tối thiểu là 15px
-    }
+    // const columnCount = feeTable[0].length; // Số cột trong bảng
+    // for (let i = 0; i < columnCount; i++) {
+    //   const column = worksheet.getColumn(startCol + i); // Lấy cột hiện tại
+    //   column.width = 15; // Đặt chiều rộng tối thiểu là 15px
+    // }
     const buffer = await workbook.xlsx.writeBuffer();
 
     // Create blob from buffer
