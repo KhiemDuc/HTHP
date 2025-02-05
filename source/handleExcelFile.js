@@ -52,13 +52,14 @@ async function updateExcelTemplate(
             bold: true, // Đậm chữ
             size: 11, // Cỡ chữ
           };
-          cell.alignment = { horizontal: "left" }; // Canh trái
+          cell.alignment = { horizontal: "center" }; // Canh trái
         }
 
         // Sao chép định dạng từ ô <hoc_phi> ban đầu nếu không phải dòng tổng
         if (rowIndex !== feeTable.length - 1) {
           const templateCell = worksheet.getCell(startRow, startCol);
           cell.style = { ...templateCell.style };
+          cell.alignment = { horizontal: "center" };
           cell.border = {
             top: { style: "thin" },
             left: { style: "thin" },
