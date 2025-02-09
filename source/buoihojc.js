@@ -135,13 +135,13 @@ const generateFeeTable = (
       : sessionsWithHolidays;
 
     // Hàm chia mảng thành từng nhóm 4 phần tử
-    const chunkArray = (array, size) => {
-      const result = [];
-      for (let i = 0; i < array.length; i += size) {
-        result.push(array.slice(i, i + size));
-      }
-      return result;
-    };
+    // const chunkArray = (array, size) => {
+    //   const result = [];
+    //   for (let i = 0; i < array.length; i += size) {
+    //     result.push(array.slice(i, i + size));
+    //   }
+    //   return result;
+    // };
 
     const firstRowSessions = sessionsToProcess.slice(0, 4);
 
@@ -171,7 +171,7 @@ const generateFeeTable = (
 
     // Đẩy từng nhóm vào bảng (tối đa 4 phần tử mỗi dòng)
     formattedSessions.forEach((group) => {
-      table.push([...group]);
+      table.push(["", ...group, "", ""]); // Đẩy dòng vào bảng
     });
 
     currentMonthStart = new Date(
@@ -199,10 +199,10 @@ const generateFeeTable = (
 const testGenerateFeeTable = () => {
   let trialDate;
   const startDate = "2025-01-16";
-  const endDate = "2025-01-20";
-  const weekdays = [4]; // Thứ 2, 4, 6
+  const endDate = "2025-02-05";
+  const weekdays = [1, 2, 3, 4]; // Thứ 2, 4, 6
   const feePerSession = 100000; // 100,000 VND mỗi buổi
-  const holidays = [new Date("2025-01-15"), new Date("2025-02-05")]; // Các ngày nghỉ
+  const holidays = []; // Các ngày nghỉ
 
   const table = generateFeeTable(
     trialDate,
