@@ -76,7 +76,7 @@
 
             <!-- Data File Input -->
             <div class="mb-3">
-              <label for="dataFileInput" class="form-label">Data File:</label>
+              <label style="font-weight: 700;" for="dataFileInput" class="form-label">Data File:</label>
               </br>
               <small id="dataFileHelp" class="form-text text-muted">
                 File chứa dữ liệu học sinh và các pattern
@@ -100,7 +100,7 @@
             </div>
 
             <div class="mb-3">
-              <label for="skipRows" class="form-label"
+              <label  style="font-weight: 700;" for="skipRows" class="form-label"
                 >Chọn số dòng muốn skip:</label
               >
               <input
@@ -119,7 +119,7 @@
             </div>
 
             <div class="form-group">
-              <label class="mb-2">Chọn phương thức thêm ngày nghỉ nghễ:</label>
+              <label class="mb-2" style="font-weight: 700;">Chọn phương thức thêm ngày nghỉ nghễ:</label>
               
               <!-- Radio buttons for selection -->
               <div class="mb-3">
@@ -155,9 +155,26 @@
           </div>
 
 
-            <div class="mb-3">
-              <label for="endDateProcess" class="form-label"
-                >Chọn ngày muốn hạch toán:</label
+            <div style="display: flex; justify-content: space-around;">
+              <div style="flex: 1; padding-right: 10px;">
+              <label style="font-weight: 700;" for="startDateProcess" class="form-label"
+                >Chọn ngày bắt đầu muốn hạch toán:</label>
+              <input
+                type="date"
+                class="form-control"
+                id="startDateProcess"
+                width="50%"
+                required
+              />
+              <small id="startDateProcess" class="form-text text-muted">
+                Lưu ý: Nếu không chọn thì mặc định tính từ ngày khai giảng
+
+              </small>
+              </div>
+              <br>
+              <div style="flex: 1;">
+              <label style="font-weight: 700;"  for="endDateProcess" class="form-label"
+                >Chọn ngày kết thúc muốn hạch toán:</label
               >
               <input
                 type="date"
@@ -166,13 +183,11 @@
                 width="50%"
                 required
               />
-              <small id="endDateProcess" class="form-text text-muted">
-                Chọn ngày hạch toán, tính từ ngày khai giảng
-              </small>
+              </div>
             </div>
 
             <div class="mb-3">
-              <label for="patternSelect" class="form-label"
+              <label style="font-weight: 700;" for="patternSelect" class="form-label"
                 >Chọn file name theo pattern:</label
               >
               <select class="form-select" id="patternSelect">

@@ -30,12 +30,20 @@ const generateFeeTable = (
   weekdays,
   feePerSession,
   endDate,
-  holidays = [] // Mảng ngày nghỉ
+  holidays = [], // Mảng ngày nghỉ,
+  startrange
 ) => {
   const trial = new Date(trialDate);
 
+  const startRange = new Date(startrange);
+
   const start = new Date(startDate);
+
+  if (startRange > start) {
+    start = startRange;
+  }
   const end = new Date(endDate);
+
   const table = [["Tháng", "", "", "", "", "Số Buổi", "Học Phí"]];
   let totalSessions = 0;
   let totalFee = 0;
@@ -198,7 +206,7 @@ const generateFeeTable = (
 // Test function
 const testGenerateFeeTable = () => {
   let trialDate;
-  const startDate = "2025-01-16";
+  const startDate = "2025-01-15";
   const endDate = "2025-02-05";
   const weekdays = [1, 2, 3, 4]; // Thứ 2, 4, 6
   const feePerSession = 100000; // 100,000 VND mỗi buổi
