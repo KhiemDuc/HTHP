@@ -37,7 +37,7 @@ const generateFeeTable = (
 
   var startRange = new Date(startrange);
 
-  const start = new Date(startDate);
+  var start = new Date(startDate);
 
   if (startRange > start) {
     start = startRange;
