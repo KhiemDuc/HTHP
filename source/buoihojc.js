@@ -35,7 +35,7 @@ const generateFeeTable = (
 ) => {
   const trial = new Date(trialDate);
 
-  const startRange = new Date(startrange);
+  var startRange = new Date(startrange);
 
   const start = new Date(startDate);
 
