@@ -380,6 +380,9 @@ document.querySelectorAll('input[name="dateInputMethod"]').forEach(radio => {
     <script>
       document.querySelector("#endDateProcess").valueAsDate = new Date();
 
+
+      
+
       document
         .getElementById("dataFileInput")
         .addEventListener("change", async (event) => {
@@ -414,6 +417,9 @@ document.querySelectorAll('input[name="dateInputMethod"]').forEach(radio => {
           const fileConfigs = [];
           const endDateProcess =
             document.getElementById("endDateProcess").value;
+
+          const startrange =
+            document.getElementById("startDateProcess").value;
           
           const skipRows = parseInt(document.getElementById("skipRows").value, 10);
 
@@ -436,6 +442,8 @@ document.querySelectorAll('input[name="dateInputMethod"]').forEach(radio => {
           const templateFile =
               document.getElementById("templateFileInput").files[0];
             const templateBuffer = await templateFile.arrayBuffer();
+
+          
 
           valuesList.forEach( (value, index) => {
             const { patterns, values } = convertToPatternsAndValues(value);
@@ -474,7 +482,8 @@ document.querySelectorAll('input[name="dateInputMethod"]').forEach(radio => {
               weekdays,
               feePerSession,
               endDateProcess,
-              holidays
+              holidays,
+              startrange
             );
             console.log(patterns);
             // console.log(values);
